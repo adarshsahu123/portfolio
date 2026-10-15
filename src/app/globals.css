@@ -1,26 +1,220 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #03040a;
+  --surface: rgba(255, 255, 255, 0.03);
+  --surface-strong: rgba(255, 255, 255, 0.06);
+  --border: rgba(148, 163, 255, 0.12);
+  --foreground: #e9edf9;
+  --muted: #8790ab;
+  --accent: #22d3ee; /* cyan */
+  --accent-2: #a855f7; /* violet */
+  --accent-3: #5eead4; /* teal */
 }
 
 @theme inline {
   --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-surface-strong: var(--surface-strong);
+  --color-border: var(--border);
   --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --color-accent-2: var(--accent-2);
+  --color-accent-3: var(--accent-3);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --font-display: var(--font-space-grotesk);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  color-scheme: dark;
+  scroll-padding-top: 5rem;
+}
+
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+  overflow-x: hidden;
+}
+
+::selection {
+  background: color-mix(in oklab, var(--accent) 35%, transparent);
+}
+
+/* ---------- surfaces ---------- */
+
+.bg-grid {
+  background-image:
+    linear-gradient(to right, rgba(148, 163, 255, 0.06) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(148, 163, 255, 0.06) 1px, transparent 1px);
+  background-size: 56px 56px;
+}
+
+/* Frosted hologram panel: opaque enough to keep text readable over the 3D world */
+.glass {
+  background: linear-gradient(180deg, rgba(14, 19, 40, 0.78), rgba(6, 9, 21, 0.72));
+  border: 1px solid var(--border);
+  @apply backdrop-blur-xl backdrop-saturate-150;
+}
+
+.glow-border {
+  position: relative;
+}
+.glow-border::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  padding: 1px;
+  border-radius: inherit;
+  background: linear-gradient(135deg, var(--accent), transparent 35%, transparent 65%, var(--accent-2));
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+/* ---------- type ---------- */
+
+.text-gradient {
+  background: linear-gradient(100deg, var(--accent) 0%, var(--accent-3) 35%, var(--accent-2) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.text-outline {
+  color: transparent;
+  -webkit-text-stroke: 1.2px rgba(233, 237, 249, 0.42);
+}
+
+/* ---------- animations ---------- */
+
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
+.caret {
+  animation: blink 1s steps(1) infinite;
+}
+
+@keyframes float-slow {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(0, -12px, 0);
+  }
+}
+.animate-float-slow {
+  animation: float-slow 7s ease-in-out infinite;
+}
+
+@keyframes scan {
+  0% {
+    top: -12%;
+  }
+  100% {
+    top: 112%;
+  }
+}
+.animate-scan {
+  animation: scan 3.6s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+}
+
+@keyframes marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+.animate-marquee {
+  animation: marquee 38s linear infinite;
+}
+
+@keyframes train {
+  from {
+    width: 0;
+  }
+}
+@keyframes shimmer {
+  to {
+    transform: translateX(200%);
+  }
+}
+.animate-shimmer {
+  animation: shimmer 2.2s ease-in-out infinite;
+}
+
+@keyframes node-glow {
+  0%,
+  100% {
+    border-color: color-mix(in oklab, var(--accent) 25%, transparent);
+    box-shadow: none;
+    color: var(--muted);
+  }
+  8%,
+  16% {
+    border-color: var(--accent);
+    box-shadow: 0 0 24px -4px var(--accent);
+    color: var(--foreground);
+  }
+}
+
+/* ---------- boot screen (pure CSS, removes itself) ---------- */
+
+@keyframes boot-out {
+  0%,
+  82% {
+    opacity: 1;
+    visibility: visible;
+  }
+  100% {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+@keyframes boot-line {
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes boot-bar {
+  from {
+    transform: scaleX(0);
+  }
+}
+.boot {
+  animation: boot-out 2s ease forwards;
+}
+.boot-line {
+  opacity: 0;
+  transform: translateY(4px);
+  animation: boot-line 0.25s ease forwards;
+}
+.boot-bar {
+  transform-origin: left;
+  animation: boot-bar 1.5s cubic-bezier(0.65, 0, 0.35, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-delay: 0ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
