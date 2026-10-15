@@ -34,7 +34,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: `${profile.name} — ${profile.aspiration}`,
     description: profile.intro,
-    images: ["/images/adarsh-portrait.webp"],
+    images: [{ url: "/og.jpg", width: 1200, height: 630, alt: "Adarsh Kumar Sahu — Aspiring AI Engineer" }],
     type: "website",
   },
 };
